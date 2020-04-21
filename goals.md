@@ -7,11 +7,11 @@
     Setup your favorite preprocessor to compile to plain CSS — SCSS, Less, Stylus.
     Learn how to use images and SVGs with webpack. done
 
-2. Setup codestyle with a keyboard shortcut to enact it
+2. Setup codestyle with a keyboard shortcut to enact it done
 
 
 3. Get expirience working with a ui library ( semntic ui / material / bootstrap)
 
 4. mobile first design / responsive
 
-5.  work with good git methodology ongoing
+5.  work with good git methodology -  ongoing
