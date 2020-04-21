@@ -22,6 +22,7 @@ module.exports = {
     'react',
   ],
   rules: {
-    "no-console": "off",
+    "no-console": "warn",
+    "react/jsx-indent": [2, 4]
   },
 };
