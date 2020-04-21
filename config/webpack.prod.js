@@ -1,24 +1,27 @@
 const merge = require('webpack-merge');
-const commonConfig = require('./webpack.common.js');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
-const TerserPlugin = require('terser-webpack-plugin')
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-
+const commonConfig = require('./webpack.common.js');
 
 
 module.exports = merge(commonConfig,
   {
     mode: 'production',
+    output: {
+      filename: '[name].bundle.[contenthash].js',
+    },
     devtool: 'source-map',
     plugins: [
       new CleanWebpackPlugin(),
       new MiniCssExtractPlugin(
         {
           filename: '[name].[contenthash].css',
-        })
+        },
+      ),
     ],
     module: {
       rules: [
@@ -26,7 +29,7 @@ module.exports = merge(commonConfig,
           test: /\.css$/,
           use: [
             MiniCssExtractPlugin.loader,
-            'css-loader'
+            'css-loader',
           ],
         },
       ],
@@ -55,5 +58,4 @@ module.exports = merge(commonConfig,
     },
 
 
-  }
-);
+  });
