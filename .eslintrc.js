@@ -23,6 +23,9 @@ module.exports = {
   ],
   rules: {
     "no-console": "warn",
-    "react/jsx-indent": [2, 4]
+    "react/jsx-indent": [1, 4],
+    "comma-dangle": 0,
+    "indent": [1, 4],
+    "react/jsx-indent-props": [1,4]
   },
 };
