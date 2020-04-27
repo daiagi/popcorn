@@ -26,6 +26,7 @@ module.exports = {
     "react/jsx-indent": [1, 4],
     "comma-dangle": 0,
     "indent": [1, 4],
-    "react/jsx-indent-props": [1,4]
+    "react/jsx-indent-props": [1,4],
+    "react/prop-types": 0
   },
 };

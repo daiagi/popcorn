@@ -4,14 +4,21 @@
 
 import React, { useState, useEffect } from 'react';
 import '@babel/polyfill';
+import fetchRetry from 'fetch-retry';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Navbar from 'react-bootstrap/Navbar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import style from './app.module.css';
+import Gallery from './gallery/gallery';
+import fetchWithTimeout from '../utils';
 
-const appendApiKeyParam = (url) => `${url}?api_key=${process.env.TMDB_API_KEY}`;
+const tmdbApiBaseUrl = 'https://api.themoviedb.org/3/discover/';
+const retryFetch = fetchRetry(fetchWithTimeout(2000), {
+    retries: 3,
+    retryDelay: 1000
+});
 
 const getPosterImg = (title, posterPath) => {
     const secureBaseUrl = 'https://image.tmdb.org/t/p/';
@@ -26,33 +33,58 @@ const getPosterImg = (title, posterPath) => {
     };
     return (
         <img
-            src={`${secureBaseUrl}${posterSizes.w92}${posterPath}`}
+            src={`${secureBaseUrl}${posterSizes.w500}${posterPath}`}
             alt={title}
         />
     );
 };
 
-const getTrending = async (timeFrame = 'week') => {
+const appendApiKeyParam = (url) => (url.includes('?')
+    ? `${url}&api_key=${process.env.TMDB_API_KEY}`
+    : `${url}?api_key=${process.env.TMDB_API_KEY}`);
+
+
+const getTrending = (timeFrame = 'week') => {
     const url = appendApiKeyParam(`https://api.themoviedb.org/3/trending/all/${timeFrame}`);
-    return fetch(url);
+    return fetch(url).then((response) => response.json());
 };
+
+const discover = (page = 1, type = 'movie', sortBy = 'popularity.desc') => {
+    const url = `${tmdbApiBaseUrl}${type}/?page=${page}&sort_by=${sortBy}&include_adult=false&include_video=false`;
+    return retryFetch(appendApiKeyParam(url));
+};
+
 const App = () => {
     const [loaded, setLoaded] = useState(false);
     const [error, setError] = useState(false);
+    const [hasMore, sethasMore] = useState(true);
 
-    const [trending, setTrending] = useState({});
-    useEffect(() => {
-        const fetchTrending = async () => {
-            try {
-                const trendingFetchResult = await (await getTrending()).json();
-                setTrending(trendingFetchResult);
-                setLoaded(true);
-            } catch (e) {
-                setError(e);
-            }
-        };
-        fetchTrending();
-    }, []);
+    const [items, setItems] = useState([]);
+
+    const loadMore = async (page) => {
+        try {
+            const response = await discover(page);
+            const responseData = await response.json();
+            sethasMore(responseData.page < responseData.total_pages);
+            setItems([...items, ...responseData.results]);
+        } catch (e) {
+            console.log();
+        }
+    };
+
+    // useEffect(() => {
+    //     const fetchFromAPI = async () => {
+    //         try {
+    //             const response = await discover();
+    //             const responseData = await response.json();
+    //             setItems(responseData.results);
+    //             setLoaded(true);
+    //         } catch (e) {
+    //             setError(e);
+    //         }
+    //     };
+    //     fetchFromAPI();
+    // }, []);
 
     return (
         <>
@@ -62,30 +94,8 @@ const App = () => {
 
 
             </Navbar>
+            <Gallery entries={items} loadMore={loadMore} hasMore={hasMore} />
 
-            {
-                trending && trending.results
-                    ? (
-                        <div className={style.gallery}>
-                            {
-                                trending.results.map((entry) => (
-                                    <div key={entry.id} className={style.aDiv}>
-                                        {getPosterImg(entry.title, entry.poster_path)}
-
-                                    </div>
-                                ))
-                            }
-                        </div>
-                    )
-                    : (
-                        <div>
-                            Loading...
-                        </div>
-
-                    )
-
-
-            }
 
         </>
     );
