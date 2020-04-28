@@ -5,51 +5,26 @@
 import React, { useState, useEffect } from 'react';
 import '@babel/polyfill';
 import fetchRetry from 'fetch-retry';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import Navbar from 'react-bootstrap/Navbar';
+import Nav from 'react-bootstrap/Nav';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import style from './app.module.css';
 import Gallery from './gallery/gallery';
 import fetchWithTimeout from '../utils';
 
 const tmdbApiBaseUrl = 'https://api.themoviedb.org/3/discover/';
-const retryFetch = fetchRetry(fetchWithTimeout(2000), {
+const retryFetch = fetchRetry(fetch, {
     retries: 3,
     retryDelay: 3000
 });
 
-const getPosterImg = (title, posterPath) => {
-    const secureBaseUrl = 'https://image.tmdb.org/t/p/';
-    const posterSizes = {
-        w92: 'w92',
-        w154: 'w154',
-        w185: 'w185',
-        w342: 'w342',
-        w500: 'w500',
-        w780: 'w780',
-        original: 'original'
-    };
-    return (
-        <img
-            src={`${secureBaseUrl}${posterSizes.w500}${posterPath}`}
-            alt={title}
-        />
-    );
-};
 
 const appendApiKeyParam = (url) => (url.includes('?')
     ? `${url}&api_key=${process.env.TMDB_API_KEY}`
     : `${url}?api_key=${process.env.TMDB_API_KEY}`);
 
 
-const getTrending = (timeFrame = 'week') => {
-    const url = appendApiKeyParam(`https://api.themoviedb.org/3/trending/all/${timeFrame}`);
-    return fetch(url).then((response) => response.json());
-};
-
-const discover = (page = 1, type = 'movie', sortBy = 'popularity.desc') => {
+const discover = (type = 'movie', sortBy = 'popularity.desc', page = 1) => {
     const url = `${tmdbApiBaseUrl}${type}/?page=${page}&sort_by=${sortBy}&include_adult=false&include_video=false`;
     return retryFetch(appendApiKeyParam(url));
 };
@@ -58,18 +33,28 @@ const App = () => {
     const [loaded, setLoaded] = useState(false);
     const [error, setError] = useState(false);
     const [hasMore, sethasMore] = useState(true);
+    const [showType, setShowType] = useState('movie');
+    const [sortBy, setSortBy] = useState('popularity.desc');
+    const [page, setPage] = useState(1);
 
     const [items, setItems] = useState([]);
 
-    const loadMore = async (page) => {
+    const loadMore = async () => {
         try {
-            const response = await discover(page);
+            const response = await discover(showType, sortBy, page);
             const responseData = await response.json();
             sethasMore(responseData.page < responseData.total_pages);
             setItems([...items, ...responseData.results]);
+            setPage(page + 1);
         } catch (e) {
             console.log();
         }
+    };
+
+    const handleShowTypeSelect = (movieOrTv) => {
+        setShowType(movieOrTv);
+        setItems([]);
+        setPage(1);
     };
 
     // useEffect(() => {
@@ -91,10 +76,19 @@ const App = () => {
 
             <Navbar bg="dark" variant="dark">
                 <Navbar.Brand href="#home">Popcorn</Navbar.Brand>
+                <Nav>
+                    <Nav.Item onClick={() => handleShowTypeSelect('tv')}>
+                        <img src="../../icons/television.svg" alt="TV" />
+                    </Nav.Item>
+                    <Nav.Item onClick={() => handleShowTypeSelect('movie')}>
+                        <img src="../../icons/icons8-final-cut-pro-x.svg" alt="Movies" />
+                    </Nav.Item>
+
+                </Nav>
 
 
             </Navbar>
-            <Gallery entries={items} loadMore={loadMore} hasMore={hasMore} />
+            <Gallery entries={items} loadMore={loadMore} hasMore={hasMore} page={page} />
 
 
         </>

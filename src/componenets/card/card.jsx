@@ -26,6 +26,8 @@ const getPosterImg = (title, posterPath) => {
 const Card = (props) => {
     const { entry } = props;
     const starRating = entry.vote_average / 2;
+    const publishDate = entry.release_date || entry.first_air_date;
+    const publishYear = publishDate.substring(0, 4);
     return (
         <div key={entry.id} className={style.posterCard}>
             {getPosterImg(entry.title, entry.poster_path)}
@@ -34,7 +36,7 @@ const Card = (props) => {
                     {entry.title}
                 </p>
                 <p className={`${style.title} ${style.year} `}>
-                    {entry.release_date.substring(0, 4)}
+                    {publishYear}
                 </p>
                 <div className={style.starRating}>
                     <StarRatings

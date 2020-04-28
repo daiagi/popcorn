@@ -5,10 +5,12 @@ import Card from '../card/card';
 
 
 function Gallery(props) {
-    const { entries, loadMore, hasMore } = props;
+    const {
+        entries, loadMore, hasMore, page
+    } = props;
     return (
         <InfiniteScroll
-            pageStart={0}
+            pageStart={page}
             loadMore={loadMore}
             initialLoad
             hasMore={hasMore}
@@ -17,7 +19,9 @@ function Gallery(props) {
             <div className={style.gallery}>
 
                 {
-                    entries && entries.map((entry) => <Card entry={entry} key={entry.id} />)
+                    entries
+                    && (entries.length > 0)
+                    && entries.map((entry) => <Card entry={entry} key={entry.id} />)
                 }
             </div>
 
