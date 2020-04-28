@@ -17,7 +17,7 @@ import fetchWithTimeout from '../utils';
 const tmdbApiBaseUrl = 'https://api.themoviedb.org/3/discover/';
 const retryFetch = fetchRetry(fetchWithTimeout(2000), {
     retries: 3,
-    retryDelay: 1000
+    retryDelay: 3000
 });
 
 const getPosterImg = (title, posterPath) => {
