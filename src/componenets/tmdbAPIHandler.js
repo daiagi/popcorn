@@ -56,8 +56,8 @@ export const getDiscoverUri = (type = 'movie', sortBy = 'popularity.desc', page 
     return appendApiKeyParam(url);
 };
 
-export const getSearchUri = (type = 'movie', query, page = 1) => {
-    const url = `${tmdbApiBaseUrl}search/${type}/?page=${page}&query=${query}&include_adult=false`;
+export const getSearchUri = (query, page = 1) => {
+    const url = `${tmdbApiBaseUrl}search/multi?page=${page}&query=${query}&include_adult=false`;
     return appendApiKeyParam(url);
 };
 
