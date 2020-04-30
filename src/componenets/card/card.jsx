@@ -1,6 +1,8 @@
 /* eslint-disable arrow-body-style */
 import React from 'react';
 import StarRatings from 'react-star-ratings';
+// import Spinner from 'react-bootstrap/Spinner';
+// import Image from 'react-shimmer';
 import style from './card.module.css';
 
 const getPosterImg = (title, posterPath) => {
@@ -20,14 +22,14 @@ const getPosterImg = (title, posterPath) => {
             alt={title}
             className={style.posterImg}
         />
+
     );
 };
 
 const Card = (props) => {
     const { entry } = props;
-    const starRating = entry.vote_average / 2;
-    const publishDate = entry.release_date || entry.first_air_date;
-    const publishYear = publishDate.substring(0, 4);
+    const starRating = entry.voteAverage / 2;
+    const publishYear = entry.releaseDate.substring(0, 4);
     return (
         <div key={entry.id} className={style.posterCard}>
             {getPosterImg(entry.title, entry.poster_path)}

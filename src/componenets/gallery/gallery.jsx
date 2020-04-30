@@ -12,8 +12,8 @@ function Gallery(props) {
         <InfiniteScroll
             pageStart={page}
             loadMore={loadMore}
-            initialLoad
             hasMore={hasMore}
+            initialLoad={false}
             loader={<div className="loader" key={0}>Loading ...</div>}
         >
             <div className={style.gallery}>
