@@ -44,6 +44,7 @@ const App = () => {
 
     sethasMore(responseData.page < responseData.total_pages);
     setLastLoadedPage(responseData.page);
+    setItems([]);
     if (shouldAppend) {
       setItems([...items, ...normalizedResults]);
     } else {
