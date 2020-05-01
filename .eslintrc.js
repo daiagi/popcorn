@@ -23,15 +23,14 @@ module.exports = {
   ],
   rules: {
     "no-console": "warn",
-    "react/jsx-indent": [1, 4],
+    "react/jsx-indent": [1, 2],
     "comma-dangle": 0,
-    "indent": [1, 4],
-    "react/jsx-indent-props": [1, 4],
+    "indent": [1, 2],
+    "react/jsx-indent-props": [1, 2],
     "react/prop-types": 0,
-    "no-unused-expressions": {
-      severity: 1,
-      "allowShortCircuit": true,
-      "allowTernary": true
-    }
+    "no-unused-expressions": ["error", { 
+      "allowShortCircuit": true, 
+      "allowTernary": true, 
+      }]
   },
 };
