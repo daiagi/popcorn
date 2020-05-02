@@ -1,14 +1,9 @@
-/* eslint-disable import/no-extraneous-dependencies */
+
 /* eslint-disable no-unused-vars */
-/* eslint-disable react/no-array-index-key */
 
 import React, { useState, useEffect, useRef } from 'react';
 import '@babel/polyfill';
-import Navbar from 'react-bootstrap/Navbar';
-import Nav from 'react-bootstrap/Nav';
-import Form from 'react-bootstrap/Form';
-import FormControl from 'react-bootstrap/FormControl';
-import Button from 'react-bootstrap/Button';
+import Navbar from './navBar/navBar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import style from './app.module.css';
 import Gallery from './gallery/gallery';
@@ -31,8 +26,6 @@ const App = () => {
   const [lastLoadedPage, setLastLoadedPage] = useState(0);
   const [viewingMode, setViewingMode] = useState(ViewModes.Discover);
   const [searchQuery, setSearchQuery] = useState('');
-
-  const textInput = useRef(null);
 
 
   const [items, setItems] = useState([]);
@@ -71,12 +64,10 @@ const App = () => {
   };
 
   const handleSearch = () => {
-    const query = textInput.current.value;
-    const apiUri = getSearchUri(query, 1);
+    const apiUri = getSearchUri(searchQuery, 1);
     performFetch(apiUri, onFetchSuccess(undefined, ViewModes.Search, false))
       .then(() => {
         setViewingMode(ViewModes.Search);
-        setSearchQuery(query);
       });
   };
 
@@ -95,40 +86,20 @@ const App = () => {
 
   return (
     <>
+      <Navbar
+        onShowTypeSelect={handleShowTypeSelect}
+        onSearchBtnClick={handleSearch}
+        onSearchKeyDown={handleSearchKeyDown}
+        searchQuery={searchQuery}
+        onSearchQueryChange={setSearchQuery}
+      />
 
-      <Navbar bg="dark" variant="dark">
-        <Navbar.Brand href="#home">Popcorn</Navbar.Brand>
-        <Nav>
-          <Nav.Item onClick={() => handleShowTypeSelect(MediaTypes.TV)}>
-            <img src="../../icons/television.svg" alt="TV" />
-          </Nav.Item>
-          <Nav.Item onClick={() => handleShowTypeSelect(MediaTypes.Movie)}>
-            <img src="../../icons/icons8-final-cut-pro-x.svg" alt="Movies" />
-          </Nav.Item>
-
-        </Nav>
-        <Form inline>
-          <FormControl
-            type="text"
-            ref={textInput}
-            value={searchQuery}
-            onKeyPress={handleSearchKeyDown}
-            onChange={() => setSearchQuery(textInput.current.value)}
-            placeholder="Search"
-            className="mr-sm-2"
-          />
-          <Button onClick={handleSearch} type="button" variant="outline-success">Search</Button>
-        </Form>
-
-
-      </Navbar>
       <Gallery
         entries={items}
         loadMore={loadMore}
         hasMore={hasMore}
         page={lastLoadedPage + 1}
       />
-
 
     </>
   );
