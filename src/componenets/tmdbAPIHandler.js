@@ -23,34 +23,39 @@ const normalizeTmdbTvShow = (tvEntry) => {
     name: title,
     first_air_date: releaseDate,
     vote_average: voteAverage,
+    episode_run_time: runtime,
     ...restOfMovieKeys
   } = tvEntry;
   return {
     releaseDate,
     title,
     voteAverage,
+    runtime: Array.isArray(runtime) ? runtime[0] : runtime,
     ...restOfMovieKeys
   };
 };
 
-export const normalizeTmdbResult = (mediaType) => (entry) => (
-  mediaType === MediaTypes.Movie
-    ? normalizeTmdbMovie(entry)
-    : normalizeTmdbTvShow(entry)
+export const normalizeTmdbResult = (mediaType, entry) => (
+  {
+    mediaType,
+    ...mediaType === MediaTypes.Movie
+      ? normalizeTmdbMovie(entry)
+      : normalizeTmdbTvShow(entry)
+  }
 );
 
 export const normalizeSearchResults = (responseResults) => {
   const tvAndMovieResults = responseResults
     .filter(
       (entry) => (entry.media_type === MediaTypes.Movie
-                                || entry.media_type === MediaTypes.TV)
+        || entry.media_type === MediaTypes.TV)
     );
   return tvAndMovieResults
-    .map((entry) => normalizeTmdbResult(entry.media_type)(entry));
+    .map((entry) => normalizeTmdbResult(entry.media_type, entry));
 };
 
 export const normalizeDiscoverResults = (currentMediaType, responseResults) => responseResults
-  .map(normalizeTmdbResult(currentMediaType));
+  .map((entry) => normalizeTmdbResult(currentMediaType, entry));
 
 
 export const tmdbApiBaseUrl = 'https://api.themoviedb.org/3/';
@@ -74,6 +79,15 @@ export const getSearchUri = (query, page = 1) => {
   const url = `${tmdbApiBaseUrl}search/multi?page=${page}&query=${query}&include_adult=false`;
   return appendApiKeyParam(url);
 };
+
+
+export const getDetailsUri = (mediaType, id) => appendApiKeyParam(
+  `${tmdbApiBaseUrl}${mediaType}/${id}`
+);
+
+export const getVideoUri = (mediaType, id) => appendApiKeyParam(
+  `${tmdbApiBaseUrl}${mediaType}/${id}/videos`
+);
 
 
 export const performFetch = (url, onSuccess) => retryFetch(url)
