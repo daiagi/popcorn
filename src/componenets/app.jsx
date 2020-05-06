@@ -1,8 +1,10 @@
-
 /* eslint-disable no-unused-vars */
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import '@babel/polyfill';
+import {
+  Route, Redirect, Switch, useLocation
+} from 'react-router-dom';
 import Navbar from './navBar/navBar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import style from './app.module.css';
@@ -14,8 +16,10 @@ import {
   normalizeDiscoverResults,
 } from './tmdbAPIHandler';
 import { ViewModes, MediaTypes } from './interfaces';
+import ShowDetails from './showPage/showDetails';
 
 const isSearch = (mode) => mode === ViewModes.Search;
+
 
 const App = () => {
   const [loaded, setLoaded] = useState(false);
@@ -26,9 +30,8 @@ const App = () => {
   const [lastLoadedPage, setLastLoadedPage] = useState(0);
   const [viewingMode, setViewingMode] = useState(ViewModes.Discover);
   const [searchQuery, setSearchQuery] = useState('');
-
-
   const [items, setItems] = useState([]);
+
 
   const onFetchSuccess = (type, viewMode, shouldAppend) => (responseData) => {
     const normalizedResults = viewMode === ViewModes.Search
@@ -86,6 +89,7 @@ const App = () => {
 
   return (
     <>
+
       <Navbar
         onShowTypeSelect={handleShowTypeSelect}
         onSearchBtnClick={handleSearch}
@@ -94,14 +98,27 @@ const App = () => {
         onSearchQueryChange={setSearchQuery}
       />
 
-      <Gallery
-        entries={items}
-        loadMore={loadMore}
-        hasMore={hasMore}
-        page={lastLoadedPage + 1}
-      />
-
+      <Switch>
+        <Route path="/show/:showId" exact component={ShowDetails} />
+        <Route
+          path="/"
+          exact
+          render={() => (
+            <Gallery
+              entries={items}
+              loadMore={loadMore}
+              hasMore={hasMore}
+              page={lastLoadedPage + 1}
+            />
+          )}
+        />
+        <Route path="*">
+          <Redirect to="/" />
+        </Route>
+      </Switch>
     </>
+
+
   );
 };
 
