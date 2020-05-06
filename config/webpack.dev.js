@@ -3,43 +3,67 @@ const Dotenv = require('dotenv-webpack');
 
 const commonConfig = require('./webpack.common.js');
 
+const cssLoaderModulesRule = {
+  loader: 'css-loader',
+  options: {
+    importLoaders: 1,
+    modules: {
+      mode: 'local',
+      localIdentName: '[name]__[local]--[hash:base64:5]',
+    },
+  },
+};
+
 module.exports = merge(commonConfig,
-    {
-        mode: 'development',
-        devServer: {
-            hot: true,
+  {
+    mode: 'development',
+    output: {
+      publicPath: '/'
+    },
+    devServer: {
+      hot: true,
+      historyApiFallback: true,
+    },
+    devtool: 'inline-source-map',
+    plugins: [
+      new Dotenv()
+    ],
+    module: {
+      rules: [
+        {
+          test: /\.css$/,
+          include: /\.module\.css$/,
+          use: [
+            'style-loader',
+            cssLoaderModulesRule,
+          ],
         },
-        devtool: 'inline-source-map',
-        plugins: [
-            new Dotenv()
-        ],
-        module: {
-            rules: [
-                {
-                    test: /\.css$/,
-                    use: [
-                        'style-loader',
-                        {
-                            loader: 'css-loader',
-                            options: {
-                                importLoaders: 1,
-                                modules: {
-                                    mode: 'local',
-                                    localIdentName: '[name]__[local]--[hash:base64:5]',
-                                },
-                            },
-                        },
-                    ],
-                    include: /\.module\.css$/,
-                },
-                {
-                    test: /\.css$/,
-                    use: [
-                        'style-loader',
-                        'css-loader',
-                    ],
-                    exclude: /\.module\.css$/,
-                },
-            ],
+        {
+          test: /\.css$/,
+          exclude: /\.module\.css$/,
+          use: [
+            'style-loader',
+            'css-loader',
+          ],
         },
-    });
+        {
+          test: /\.s[ac]ss$/,
+          include: /\.module\.scss$/,
+          use: [
+            'style-loader',
+            cssLoaderModulesRule,
+            'sass-loader',
+          ],
+        },
+        {
+          test: /\.s[ac]ss$/,
+          exclude: /\.module\.scss$/,
+          use: [
+            'style-loader',
+            'css-loader',
+            'sass-loader',
+          ],
+        }
+      ],
+    },
+  });

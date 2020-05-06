@@ -1,4 +1,5 @@
 module.exports = {
+  "parser": "babel-eslint",
   env: {
     browser: true,
     es6: true,
@@ -34,6 +35,7 @@ module.exports = {
     "no-unused-expressions": ["error", {
       "allowShortCircuit": true,
       "allowTernary": true,
-    }]
+    }],
+    "no-unused-vars": "warn"
   },
 };
