@@ -1,5 +1,4 @@
-import fetchRetry from 'fetch-retry';
-import fetchWithTimeout from '../utils';
+
 import { MediaTypes } from './interfaces';
 
 
@@ -59,10 +58,6 @@ export const normalizeDiscoverResults = (currentMediaType, responseResults) => r
 
 
 export const tmdbApiBaseUrl = 'https://api.themoviedb.org/3/';
-const retryFetch = fetchRetry(fetchWithTimeout(600), {
-  retries: 10,
-  retryDelay: 500
-});
 
 
 export const appendApiKeyParam = (url) => (url.includes('?')
@@ -84,12 +79,10 @@ export const getSearchUri = (query, page = 1) => {
 export const getDetailsUri = (mediaType, id) => appendApiKeyParam(
   `${tmdbApiBaseUrl}${mediaType}/${id}`
 );
+export const getCreditsUri = (mediaType, id) => appendApiKeyParam(
+  `${tmdbApiBaseUrl}${mediaType}/${id}/credits`
+);
 
 export const getVideoUri = (mediaType, id) => appendApiKeyParam(
   `${tmdbApiBaseUrl}${mediaType}/${id}/videos`
 );
-
-
-export const performFetch = (url, onSuccess) => retryFetch(url)
-  .then((response) => response.json())
-  .then(onSuccess);

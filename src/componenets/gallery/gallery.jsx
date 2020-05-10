@@ -1,31 +1,42 @@
 import React from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
+import { makeStyles } from '@material-ui/core';
 import style from './gallery.module.css';
 import Card from '../card/card';
+import { useLoadingStatus } from '../errorHandler';
 
 
 function Gallery(props) {
   const {
     entries, loadMore, hasMore, page
   } = props;
+  const { loadingStatus, ..._ } = useLoadingStatus();
+  const classes = makeStyles((theme) => ({
+    toolbar: theme.mixins.toolbar,
+  }))();
+
   return (
-    <InfiniteScroll
-      pageStart={page}
-      loadMore={loadMore}
-      hasMore={hasMore}
-      initialLoad={false}
-      loader={<div className="loader" key={0}>Loading ...</div>}
-    >
-      <div className={style.gallery}>
+    <>
+      <div className={classes.toolbar} />
+      <InfiniteScroll
+        pageStart={page}
+        loadMore={loadMore}
+        hasMore={hasMore}
+        initialLoad={false}
 
-        {
-          entries
-                    && (entries.length > 0)
-                    && entries.map((entry) => <Card entry={entry} key={entry.id} />)
-        }
-      </div>
 
-    </InfiniteScroll>
+      >
+        <div className={style.gallery}>
+
+          {
+            entries
+          && (entries.length > 0)
+          && entries.map((entry) => <Card entry={entry} key={entry.id} />)
+          }
+        </div>
+
+      </InfiniteScroll>
+    </>
   );
 }
 

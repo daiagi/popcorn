@@ -1,22 +1,15 @@
-/* eslint-disable max-len */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable no-unused-vars */
-
-import React, { useState, useEffect, useRef } from 'react';
-import StarRatings from 'react-star-ratings';
-
-import { useParams, useLocation } from 'react-router-dom';
-import {
-  performFetch, getDetailsUri, normalizeTmdbResult, getVideoUri
-} from '../tmdbAPIHandler';
 
 import '@babel/polyfill';
-
-
 import 'bootstrap/dist/css/bootstrap.min.css';
-import style from './showDetails.module.scss';
+import React, { useEffect, useState } from 'react';
+import { useLocation, useParams } from 'react-router-dom';
+import StarRatings from 'react-star-ratings';
 import PosterImg from '../posterImg';
-import { PosterSizes } from '../interfaces';
+import {
+  getCreditsUri, getDetailsUri, getVideoUri, normalizeTmdbResult, performFetch
+} from '../tmdbAPIHandler';
+import style from './showDetails.module.scss';
+
 
 const parseTime = (time) => {
   if (time === null || time === undefined) {
@@ -27,7 +20,7 @@ const parseTime = (time) => {
   const houresString = (houres > 0) ? `${houres}h` : '';
   return `${houresString} ${minutes}m`;
 };
-const ShowDetails = ({ match, location }) => {
+const ShowDetails = () => {
   const { showId } = useParams();
   const mediaType = new URLSearchParams(useLocation().search).get('mediaType');
   const [details, setDetails] = useState({});
@@ -57,10 +50,25 @@ const ShowDetails = ({ match, location }) => {
       (video) => video.site === 'YouTube' && video.type === 'Trailer');
     setVideos(youtubeTrailers || []);
   };
+  const onFetchCreditsSucces = (responseData) => {
+    const director = responseData?.crew?.filter((crewMember) => crewMember.job === 'Director')[0];
+    const actors = responseData?.cast || [];
+    const leadActors = [];
+    for (let i = 0; i < actors.length; i++) {
+      if (leadActors.length === 4) {
+        break;
+      }
+      if (actors[i]?.order < 5) {
+        leadActors.push(actors[i]);
+      }
+    }
+    setDetails((prevDetails) => ({ ...prevDetails, director, leadActors }));
+  };
   useEffect(() => {
     performFetch(getDetailsUri(mediaType, showId),
       onFetchDetailsSuccess);
     performFetch(getVideoUri(mediaType, showId), onFetchVideosSuccess);
+    performFetch(getCreditsUri(mediaType, showId), onFetchCreditsSucces);
   }, []);
 
   return (
@@ -82,6 +90,14 @@ const ShowDetails = ({ match, location }) => {
             />
           )
         }
+        <div className={style.gradient}>
+          <PosterImg
+            posterPath={details?.posterPath}
+            title={details?.title}
+            className={style.posterImg}
+
+          />
+        </div>
 
       </div>
 
@@ -117,21 +133,24 @@ const ShowDetails = ({ match, location }) => {
 
       </div>
       <div className={style.details}>
-        <div className={style.posterImgContainer}>
-          <PosterImg
-            posterPath={details?.posterPath}
-            title={details?.title}
-            className={style.posterImg}
-            size={PosterSizes.w342}
-          />
-        </div>
+
         <div className={style.summery}>
-          <p>
-            {details?.overview}
-          </p>
-          <p>Directors: Jeff Fowler</p>
-          <p>Directors: Jeff Fowler</p>
+
+          {details?.overview}
+
         </div>
+        <div className={style.cast}>
+          <span>
+            {details.director ? `Director: ${details.director.name}` : ''}
+          </span>
+          <br />
+          <span>
+            {(details?.leadActors?.length > 0)
+              ? `Starring: ${details.leadActors.map((a) => a.name).join(', ')}`
+              : ''}
+          </span>
+        </div>
+
       </div>
     </div>
   );

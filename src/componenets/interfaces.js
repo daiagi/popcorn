@@ -1,6 +1,7 @@
 export const MediaTypes = {
   TV: 'tv',
-  Movie: 'movie'
+  Movie: 'movie',
+  All: 'all'
 };
 export const ViewModes = {
   Discover: 'discover',

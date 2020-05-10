@@ -1,98 +1,133 @@
-/* eslint-disable no-unused-vars */
 
-import React, { useState, useEffect } from 'react';
 import '@babel/polyfill';
-import {
-  Route, Redirect, Switch, useLocation
-} from 'react-router-dom';
-import Navbar from './navBar/navBar';
+// import Navbar from './navBar/navBar';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import style from './app.module.css';
+import React, { useCallback, useState } from 'react';
+import { Route, Switch, useHistory } from 'react-router-dom';
+import { doQuery, useQuery } from '../query';
+import Page404 from './404';
+import { useErrorStatus, useLoadingStatus } from './errorHandler';
 import Gallery from './gallery/gallery';
-import {
-  performFetch,
-  getDiscoverUri, getSearchUri,
-  normalizeSearchResults,
-  normalizeDiscoverResults,
-} from './tmdbAPIHandler';
-import { ViewModes, MediaTypes } from './interfaces';
+import { MediaTypes, ViewModes } from './interfaces';
+import WithLoading from './loading/loading';
+import NavBarMaterial from './navBar/navBarMaterial';
 import ShowDetails from './showPage/showDetails';
-
-const isSearch = (mode) => mode === ViewModes.Search;
-
+import {
+  getDiscoverUri, getSearchUri, normalizeDiscoverResults, normalizeSearchResults
+} from './tmdbAPIHandler';
 
 const App = () => {
-  const [loaded, setLoaded] = useState(false);
-  const [error, setError] = useState(false);
   const [hasMore, sethasMore] = useState(true);
-  const [showType, setShowType] = useState(MediaTypes.Movie);
+  const [currentMediaType, setMediaType] = useState(MediaTypes.Movie);
   const [sortBy, setSortBy] = useState('popularity.desc');
   const [lastLoadedPage, setLastLoadedPage] = useState(0);
   const [viewingMode, setViewingMode] = useState(ViewModes.Discover);
   const [searchQuery, setSearchQuery] = useState('');
   const [items, setItems] = useState([]);
+  const history = useHistory();
+  const { setErrorStatusCode } = useErrorStatus();
+  const { setLoadingStatus, ..._ } = useLoadingStatus();
+
+  const contextParams = useCallback(() => ({ setErrorStatusCode, setLoadingStatus }));
 
 
-  const onFetchSuccess = (type, viewMode, shouldAppend) => (responseData) => {
+  const updatePagesState = ({ mediaType, viewMode, firstPage }) => (responseData) => {
     const normalizedResults = viewMode === ViewModes.Search
       ? normalizeSearchResults(responseData.results)
-      : normalizeDiscoverResults(type, responseData.results);
+      : normalizeDiscoverResults(mediaType, responseData.results);
 
     sethasMore(responseData.page < responseData.total_pages);
     setLastLoadedPage(responseData.page);
-    setItems([]);
-    if (shouldAppend) {
+
+    if (!firstPage) {
       setItems([...items, ...normalizedResults]);
     } else {
       setItems(normalizedResults);
     }
+    setViewingMode(viewMode);
+    setMediaType(mediaType);
   };
+
+
+  useQuery(
+    {
+      url: getDiscoverUri(currentMediaType, sortBy, lastLoadedPage + 1),
+      callback: updatePagesState({
+        mediaType: currentMediaType,
+        viewMode: ViewModes.Discover,
+        firstPage: true
+      })
+    }
+  );
 
 
   const loadMore = () => {
-    const apiUri = isSearch(viewingMode)
+    const apiUri = viewingMode === ViewModes.Search
       ? getSearchUri(searchQuery, lastLoadedPage + 1)
-      : getDiscoverUri(showType, sortBy, lastLoadedPage + 1);
-    performFetch(apiUri, onFetchSuccess(showType, viewingMode, true));
+      : getDiscoverUri(currentMediaType, sortBy, lastLoadedPage + 1);
+    doQuery({
+      url: apiUri,
+      callback: updatePagesState({
+        mediaType: currentMediaType,
+        viewMode: viewingMode,
+        firstPage: false
+      }),
+      ...contextParams()
+
+    });
+  };
+  const onDiscoverSuccess = (mediaType) => (data) => {
+    updatePagesState({
+      mediaType,
+      viewMode: ViewModes.Discover,
+      firstPage: true
+    })((data));
+    setSearchQuery('');
+    history.push(`/${mediaType}/`);
   };
 
-  const handleShowTypeSelect = (movieOrTv) => {
-    const apiUri = getDiscoverUri(movieOrTv, sortBy, 1);
-    performFetch(apiUri, onFetchSuccess(movieOrTv, ViewModes.Discover, false))
-      .then(() => {
-        setShowType(movieOrTv);
-        setViewingMode(ViewModes.Discover);
-        setSearchQuery('');
-      });
+  const onSearchSuccess = (responseData) => {
+    updatePagesState({
+      mediaType: MediaTypes.All,
+      viewMode: ViewModes.Search,
+      firstPage: true
+    })(responseData);
+    history.push('/');
   };
 
-  const handleSearch = () => {
-    const apiUri = getSearchUri(searchQuery, 1);
-    performFetch(apiUri, onFetchSuccess(undefined, ViewModes.Search, false))
-      .then(() => {
-        setViewingMode(ViewModes.Search);
-      });
+  const onMediaTypeSelect = (mediaType) => {
+    doQuery(
+      {
+        url: getDiscoverUri(mediaType, sortBy, 1),
+        callback: onDiscoverSuccess(mediaType),
+        ...contextParams()
+      }
+    );
+  };
+
+
+  const search = () => {
+    doQuery({
+      url: getSearchUri(searchQuery, 1),
+      callback: onSearchSuccess,
+      ...contextParams()
+    });
   };
 
   const handleSearchKeyDown = (event) => {
     if (event.key === 'Enter' && event.shiftKey === false) {
       event.preventDefault();
-      handleSearch();
+      search();
     }
   };
-
-  useEffect(() => {
-    performFetch(getDiscoverUri(showType, sortBy, lastLoadedPage + 1),
-      onFetchSuccess(showType, viewingMode, false));
-  }, []);
 
 
   return (
     <>
 
-      <Navbar
-        onShowTypeSelect={handleShowTypeSelect}
-        onSearchBtnClick={handleSearch}
+      <NavBarMaterial
+        showType={currentMediaType === MediaTypes.All ? false : currentMediaType}
+        onShowTypeSelect={onMediaTypeSelect}
         onSearchKeyDown={handleSearchKeyDown}
         searchQuery={searchQuery}
         onSearchQueryChange={setSearchQuery}
@@ -101,20 +136,22 @@ const App = () => {
       <Switch>
         <Route path="/show/:showId" exact component={ShowDetails} />
         <Route
-          path="/"
+          path={['/', '/tv/', '/movie/']}
           exact
           render={() => (
-            <Gallery
-              entries={items}
-              loadMore={loadMore}
-              hasMore={hasMore}
-              page={lastLoadedPage + 1}
-            />
+            <WithLoading>
+              <Gallery
+                entries={items}
+                loadMore={loadMore}
+                hasMore={hasMore}
+                page={lastLoadedPage + 1}
+              />
+            </WithLoading>
+
           )}
         />
-        <Route path="*">
-          <Redirect to="/" />
-        </Route>
+        <Route component={Page404} />
+
       </Switch>
     </>
 
