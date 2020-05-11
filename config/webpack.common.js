@@ -1,6 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
+
 
 const projectRoot = path.resolve(__dirname, '..');
 const srcDir = path.resolve(projectRoot, 'src');
@@ -16,6 +18,7 @@ module.exports = {
   },
 
   plugins: [
+    new Dotenv(),
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: path.resolve(srcDir, 'index.html'),

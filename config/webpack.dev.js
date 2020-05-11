@@ -26,7 +26,7 @@ module.exports = merge(commonConfig,
     },
     devtool: 'inline-source-map',
     plugins: [
-      new Dotenv()
+
     ],
     module: {
       rules: [
