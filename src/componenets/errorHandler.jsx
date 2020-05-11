@@ -12,7 +12,7 @@ const LoadingStautsContext = React.createContext();
 export const ErrorHandler = ({ children }) => {
   const history = useHistory();
   const [errorStatusCode, setErrorStatusCode] = React.useState();
-  const [loadingStatus, setLoadingStatus] = React.useState(false);
+  const [loadingStatus, setLoadingStatus] = React.useState(undefined);
 
   // Make sure to "remove" this status code whenever the user
   // navigates to a new URL. If we didn't do that, then the user

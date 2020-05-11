@@ -19,7 +19,7 @@ const WithLoading = ({ children }) => {
   const classes = useStyles();
   return (
     <>
-      <Backdrop className={classes.backdrop} open={loadingStatus}>
+      <Backdrop className={classes.backdrop} open={loadingStatus || false}>
         <CircularProgress className={classes.progress} color="secondary" size={60} />
       </Backdrop>
       {children}
