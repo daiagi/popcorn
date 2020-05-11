@@ -2,7 +2,7 @@ const merge = require('webpack-merge');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
-
+const CompressionPlugin = require('compression-webpack-plugin');
 
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const commonConfig = require('./webpack.common.js');
@@ -24,10 +24,11 @@ module.exports = merge(commonConfig,
     mode: 'production',
     output: {
       filename: '[name].bundle.[contenthash].js',
-      publicPath: '/dist/'
+      publicPath: '/'
     },
-    devtool: 'source-map',
+    devtool: '',
     plugins: [
+      new CompressionPlugin(),
       new CleanWebpackPlugin(),
       new MiniCssExtractPlugin(
         {
@@ -94,6 +95,15 @@ module.exports = merge(commonConfig,
           sourceMap: true,
         }),
       ],
+      splitChunks: {
+        cacheGroups: {
+          commons: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendors',
+            chunks: 'all'
+          }
+        }
+      }
     },
 
 
