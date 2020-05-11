@@ -1,12 +1,15 @@
 
 import '@babel/polyfill';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import React, { useEffect, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import StarRatings from 'react-star-ratings';
+import YouTube from 'react-youtube';
+import { useQuery } from '../../query';
+import WithLoading from '../loading/loading';
 import PosterImg from '../posterImg';
 import {
-  getCreditsUri, getDetailsUri, getVideoUri, normalizeTmdbResult, performFetch
+  getCreditsUri, getDetailsUri, getVideoUri, normalizeTmdbResult
 } from '../tmdbAPIHandler';
 import style from './showDetails.module.scss';
 
@@ -26,6 +29,9 @@ const ShowDetails = () => {
   const [details, setDetails] = useState({});
   const [videos, setVideos] = useState([]);
   const publishYear = details?.releaseDate?.substring(0, 4) || '';
+  const gradientDiv = useRef(null);
+
+
   const onFetchDetailsSuccess = (responseData) => {
     const {
       poster_path: posterPath, releaseDate, title,
@@ -64,93 +70,104 @@ const ShowDetails = () => {
     }
     setDetails((prevDetails) => ({ ...prevDetails, director, leadActors }));
   };
-  useEffect(() => {
-    performFetch(getDetailsUri(mediaType, showId),
-      onFetchDetailsSuccess);
-    performFetch(getVideoUri(mediaType, showId), onFetchVideosSuccess);
-    performFetch(getCreditsUri(mediaType, showId), onFetchCreditsSucces);
-  }, []);
+  useQuery({
+    url: getDetailsUri(mediaType, showId),
+    callback: onFetchDetailsSuccess
+  });
+  useQuery({
+    url: getVideoUri(mediaType, showId),
+    callback: onFetchVideosSuccess
+  });
+  useQuery({
+    url: getCreditsUri(mediaType, showId),
+    callback: onFetchCreditsSucces
+  });
+
 
   return (
+    <div className={style.PageContainer}>
+      <div className={style.container}>
+        <WithLoading>
+          <div
+            className={style.videoContainer}
+          >
+            {
+              videos[0]?.key
+              && (
+                <YouTube
+                  className={style.youtubePreview}
+                  videoId={videos[0].key}
 
-    <div className={style.container}>
-      <div
-        className={style.videoContainer}
-      >
-        {
-          videos[0]?.key
-          && (
-            <iframe
-              className={style.youtubePreview}
-              title="showTrailer"
-              src={`https://www.youtube-nocookie.com/embed/${videos[0].key}`}
-              frameBorder="0"
-              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-          )
-        }
-        <div className={style.gradient}>
-          <PosterImg
-            posterPath={details?.posterPath}
-            title={details?.title}
-            className={style.posterImg}
+                  onPlay={() => {
+                    gradientDiv.current.style.zIndex = 0;
+                    gradientDiv.current.style.width = '24%';
+                  }}
+                />
+              )
+            }
 
-          />
-        </div>
+            <div className={style.gradient} style={{ zIndex: 2 }} ref={gradientDiv}>
+              <PosterImg
+                posterPath={details?.posterPath}
+                title={details?.title}
+                className={style.posterImg}
 
-      </div>
-
-      <div className={style.titleInfo}>
-        <div className={style.ShowDetails}>
-          <show-title>
-            {details?.title}
-          </show-title>
-          <span>{publishYear}</span>
-          <span className={style.verticalLine}>|</span>
-          <span>{parseTime(details?.runtime)}</span>
-          <span className={style.verticalLine}>|</span>
-          <span>{details?.genres?.join(', ')}</span>
-          <div />
-        </div>
-
-        <div className={style.rating}>
-          <StarRatings
-            rating={1}
-            starRatedColor="#ffc107"
-            starEmptyColor="#bdc4cb"
-            starDimension="30px"
-            starSpacing="1px"
-            numberOfStars={1}
-            name="rating"
-          />
-          <div>
-
-            {`${details?.voteAverage} / 10`}
+              />
+            </div>
 
           </div>
+        </WithLoading>
+        <div className={style.titleInfo}>
+          <div className={style.ShowDetails}>
+            <show-title>
+              {details?.title}
+            </show-title>
+            <span>{publishYear}</span>
+            <span className={style.verticalLine}>|</span>
+            <span>{parseTime(details?.runtime)}</span>
+            <span className={style.verticalLine}>|</span>
+            <span>{details?.genres?.join(', ')}</span>
+            <div />
+          </div>
+
+          <div className={style.rating}>
+            <StarRatings
+              rating={1}
+              starRatedColor="#ffc107"
+              starEmptyColor="#bdc4cb"
+              starDimension="30px"
+              starSpacing="1px"
+              numberOfStars={1}
+              name="rating"
+            />
+            <div>
+
+              {`${details?.voteAverage} / 10`}
+
+            </div>
+          </div>
+
         </div>
+        <div className={style.details}>
 
-      </div>
-      <div className={style.details}>
+          <div className={style.summery}>
 
-        <div className={style.summery}>
+            {details?.overview}
 
-          {details?.overview}
+          </div>
+          <div className={style.cast}>
+            <span>
+              {details.director ? `Director: ${details.director.name}` : ''}
+            </span>
+            <br />
+            <span>
+              {(details?.leadActors?.length > 0)
+                ? `Starring: ${details.leadActors.map((a) => a.name).join(', ')}`
+                : ''}
+            </span>
+          </div>
 
         </div>
-        <div className={style.cast}>
-          <span>
-            {details.director ? `Director: ${details.director.name}` : ''}
-          </span>
-          <br />
-          <span>
-            {(details?.leadActors?.length > 0)
-              ? `Starring: ${details.leadActors.map((a) => a.name).join(', ')}`
-              : ''}
-          </span>
-        </div>
-
       </div>
     </div>
   );

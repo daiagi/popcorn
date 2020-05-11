@@ -1,35 +1,24 @@
 
+.PageContainer{
+  width: 100%;
+  background-color: rgba(30, 42, 58, 0.961); ;
+}
 
 .container {
   width: 100%;
-  height: 90vh;
+  // height: 90vh;
+  max-width: 600px;
+  margin: auto;
 }
 
-@media (min-width: 860px ) {
-  .container {
-    width: 80%;
-    margin: auto;
-  }
-}
-@media (min-width: 1200px ) {
-  .container {
-    width: 70%;
-    margin: auto;
-  }
-}
 
-@media (min-width: 1500px ) {
-  .container {
-    width: 60%;
-    margin: auto;
-  }
-}
 
 .videoContainer {
   position: relative;
   margin: 0;
-  width: 100vw;
+  width: 100%;
   height: 45.5vw;
+  max-height: 273px;
   outline: none;
   background-color: rgb(30, 42, 58);
 
@@ -39,14 +28,16 @@
   .youtubePreview {
     width: 80%;
     height: 45.2vw;
+    max-height: 271px;
     float: right;
   }
   .gradient {
     position: absolute;
+    transition: width 0.2s ease-out;
     top: 0;
     left: 0;
     z-index: 2;
-    width: 35%;
+    width: 33%;
     height: 100%;
     background: rgba(30, 42, 58, 0.961);
     background: linear-gradient(90deg, rgba(30, 42, 58,0.96) 0%,
@@ -75,7 +66,7 @@
   color: #fffefc;
 }
 show-title {
-  font-size: min(max(20px, 4vw), 32px);
+  font-size: min(max(20px, 4vw), 28px);
   font-weight: bold;
   margin-bottom: 5px;
   display: block;
