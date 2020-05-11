@@ -1,6 +1,5 @@
 
 import '@babel/polyfill';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useRef, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import StarRatings from 'react-star-ratings';

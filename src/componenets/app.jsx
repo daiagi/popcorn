@@ -1,7 +1,5 @@
 
 import '@babel/polyfill';
-// import Navbar from './navBar/navBar';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useCallback, useState } from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
 import { doQuery, useQuery } from '../query';
