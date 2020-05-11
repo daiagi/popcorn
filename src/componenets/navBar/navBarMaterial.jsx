@@ -12,6 +12,20 @@ import {
   AntTab, AntTabs, appBarStyle, BootstrapInput
 } from './navBarMaterialStyle';
 
+function ElevationScroll(props) {
+  const { children } = props;
+
+  const trigger = useScrollTrigger({
+    disableHysteresis: true,
+    threshold: 0,
+
+  });
+
+  return React.cloneElement(children, {
+    elevation: trigger ? 4 : 0,
+  });
+}
+
 
 export default function NavBarMaterial(props) {
   const {
@@ -34,53 +48,58 @@ export default function NavBarMaterial(props) {
 
   return (
     <div className={classes.root}>
-      <Slide appear={false} direction="down" in={!trigger}>
+      <ElevationScroll>
+        <Slide appear={false} direction="down" in={!trigger}>
 
-        <AppBar position={match ? 'static' : 'fixed'}>
-          <Toolbar>
-            <Typography
-              className={classes.title}
-              onClick={() => history.push('/')}
-              variant="h6"
-              noWrap
-            >
-              PoP
-            </Typography>
-            <div className={classes.search}>
-              <div className={classes.searchIcon}>
-                <SearchIcon />
+
+          <AppBar position={match ? 'static' : 'fixed'}>
+            <Toolbar>
+              <Typography
+                className={classes.title}
+                onClick={() => history.push('/')}
+                variant="h6"
+                noWrap
+              >
+                PoP
+              </Typography>
+              <div className={classes.search}>
+                <div className={classes.searchIcon}>
+                  <SearchIcon />
+                </div>
+                <InputBase
+                  value={searchQuery}
+                  onKeyPress={onSearchKeyDown}
+                  onChange={(e) => onSearchQueryChange(e.target.value)}
+                  placeholder="Search…"
+                  classes={{
+                    root: classes.inputRoot,
+                    input: classes.inputInput,
+                  }}
+                  inputProps={{ 'aria-label': 'search' }}
+                />
+
               </div>
-              <InputBase
-                value={searchQuery}
-                onKeyPress={onSearchKeyDown}
-                onChange={(e) => onSearchQueryChange(e.target.value)}
-                placeholder="Search…"
-                classes={{
-                  root: classes.inputRoot,
-                  input: classes.inputInput,
-                }}
-                inputProps={{ 'aria-label': 'search' }}
-              />
+              <AntTabs value={showType} onChange={handleChange} aria-label="simple tabs example">
+                <AntTab label="Movies" value={MediaTypes.Movie} />
+                <AntTab label="Tv" value={MediaTypes.TV} />
+              </AntTabs>
+              <Select
+                className={classes.select}
+                native
+                value={showType}
+                onChange={(e) => handleChange(e, e.target.value)}
+                input={<BootstrapInput />}
 
-            </div>
-            <AntTabs value={showType} onChange={handleChange} aria-label="simple tabs example">
-              <AntTab label="Movies" value={MediaTypes.Movie} />
-              <AntTab label="Tv" value={MediaTypes.TV} />
-            </AntTabs>
-            <Select
-              className={classes.select}
-              native
-              value={showType}
-              onChange={(e) => handleChange(e, e.target.value)}
-              input={<BootstrapInput />}
+              >
+                <option className={classes.option} value={MediaTypes.Movie}>Movies</option>
+                <option className={classes.option} value={MediaTypes.TV}>TV</option>
+              </Select>
+            </Toolbar>
+          </AppBar>
+        </Slide>
+      </ElevationScroll>
 
-            >
-              <option className={classes.option} value={MediaTypes.Movie}>Movies</option>
-              <option className={classes.option} value={MediaTypes.TV}>TV</option>
-            </Select>
-          </Toolbar>
-        </AppBar>
-      </Slide>
+
     </div>
   );
 }
