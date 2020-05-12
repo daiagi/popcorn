@@ -17,11 +17,14 @@ module.exports = {
     path: distDir,
   },
 
+
   plugins: [
+
     new Dotenv(),
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: path.resolve(srcDir, 'index.html'),
+      favicon: path.resolve(projectRoot, 'icons', 'favicon', 'favicon-32x32.png')
 
     }),
   ],
@@ -44,7 +47,7 @@ module.exports = {
       },
 
       {
-        test: /\.(png|svg|jpg|gif)$/,
+        test: /\.(png|svg|jpg|gif|ico)$/,
         use: [
           'file-loader',
         ],
