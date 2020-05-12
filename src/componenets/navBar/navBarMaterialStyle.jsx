@@ -4,6 +4,9 @@ import { withStyles, makeStyles, fade } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import InputBase from '@material-ui/core/InputBase';
+import {
+  ArrowDropDown
+} from '@material-ui/icons';
 
 
 export const AntTabs = withStyles((theme) => ({
@@ -17,6 +20,13 @@ export const AntTabs = withStyles((theme) => ({
     backgroundColor: '#1890ff',
   },
 }))(Tabs);
+export const Arrow = withStyles((theme) => ({
+  root: {
+    position: 'relative',
+    right: '25%'
+  }
+
+}))(ArrowDropDown);
 
 export const AntTab = withStyles((theme) => ({
   root: {
@@ -74,9 +84,13 @@ export const appBarStyle = makeStyles((theme) => ({
   },
   title: {
     flexGrow: 1,
+    flexShrink: 4,
     display: 'block',
+  },
+  logo: {
+    width: '10vw',
+    minWidth: 60,
     cursor: 'pointer'
-
   },
   search: {
     position: 'relative',
@@ -136,7 +150,8 @@ export const BootstrapInput = withStyles((theme) => ({
     border: '1px solid #ced4da',
     fontSize: 16,
     fontWeight: '700',
-    padding: '9px 20px 9px 12px',
+    minWidth: 'max-content',
+    padding: '7px 17px 9px 8px !important',
     transition: theme.transitions.create(['border-color', 'box-shadow']),
     // Use the system font instead of the default Roboto font.
     fontFamily: [

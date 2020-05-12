@@ -1,15 +1,17 @@
-import { useScrollTrigger, Slide } from '@material-ui/core';
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+import { Slide, useScrollTrigger } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import InputBase from '@material-ui/core/InputBase';
 import Select from '@material-ui/core/Select';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import SearchIcon from '@material-ui/icons/Search';
 import React from 'react';
-import { useHistory, useRouteMatch } from 'react-router-dom';
+import { useRouteMatch, useHistory } from 'react-router-dom';
+import logo from '../../../icons/logo-via-logohub.png';
 import { MediaTypes } from '../interfaces';
 import {
-  AntTab, AntTabs, appBarStyle, BootstrapInput
+  AntTab, AntTabs, appBarStyle, BootstrapInput, Arrow
 } from './navBarMaterialStyle';
 
 function ElevationScroll(props) {
@@ -37,6 +39,7 @@ export default function NavBarMaterial(props) {
   } = props;
   const classes = appBarStyle();
   const history = useHistory();
+
   const trigger = useScrollTrigger();
   const match = useRouteMatch('/show/:showId');
 
@@ -54,14 +57,15 @@ export default function NavBarMaterial(props) {
 
           <AppBar position={match ? 'static' : 'fixed'}>
             <Toolbar>
-              <Typography
-                className={classes.title}
-                onClick={() => history.push('/')}
-                variant="h6"
-                noWrap
-              >
-                PoP
-              </Typography>
+              <div className={classes.title}>
+                <img
+                  onClick={() => history.push('/')}
+
+                  src={logo}
+                  alt="logo"
+                  className={classes.logo}
+                />
+              </div>
               <div className={classes.search}>
                 <div className={classes.searchIcon}>
                   <SearchIcon />
@@ -89,6 +93,8 @@ export default function NavBarMaterial(props) {
                 value={showType}
                 onChange={(e) => handleChange(e, e.target.value)}
                 input={<BootstrapInput />}
+                IconComponent={Arrow}
+
 
               >
                 <option className={classes.option} value={MediaTypes.Movie}>Movies</option>
