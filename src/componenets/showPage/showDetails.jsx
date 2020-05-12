@@ -4,6 +4,7 @@ import React, { useRef, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import StarRatings from 'react-star-ratings';
 import YouTube from 'react-youtube';
+import { Helmet } from 'react-helmet';
 import { useQuery } from '../../query';
 import WithLoading from '../loading/loading';
 import PosterImg from '../posterImg';
@@ -85,6 +86,11 @@ const ShowDetails = () => {
 
   return (
     <div className={style.PageContainer}>
+      {details?.title && (
+        <Helmet>
+          <title>{`${details.title} - PoP `}</title>
+        </Helmet>
+      )}
       <div className={style.container}>
         <WithLoading>
           <div
