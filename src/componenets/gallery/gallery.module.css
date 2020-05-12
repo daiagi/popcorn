@@ -1,0 +1,66 @@
+/* 
+.posterCard {
+    width: 100%;
+    height: auto;
+    display: inline-block;
+} */
+
+
+
+.gallery {
+    background-color: black;
+    display: grid;
+    grid-gap: 4px;
+    grid-auto-rows: auto;
+
+
+    
+
+}
+
+@media (min-width: 860px ) {
+    .gallery {
+      grid-template-columns: repeat(7, 1fr);
+    }
+  }
+
+  @media (min-width: 1500px ) {
+    .gallery {
+      grid-template-columns: repeat(8, 1fr);
+    }
+  }
+
+@media (max-width: 860px ) {
+    .gallery {
+      grid-template-columns: repeat(5, 1fr);
+    }
+  }
+
+
+@media (max-width: 700px ) {
+    .gallery {
+      grid-template-columns: repeat(4, 1fr);
+
+    }
+  }
+
+
+
+  @media (max-width: 540px ) {
+    .gallery {
+      grid-template-columns: repeat(3, 1fr);
+
+    }
+  }
+
+  @media (max-width: 370px) {
+    .gallery {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 200px) {
+    .gallery {
+      grid-template-columns: repeat(1, 1fr);
+    }
+  }

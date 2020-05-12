@@ -1,24 +1,40 @@
 const merge = require('webpack-merge');
-const commonConfig = require('./webpack.common.js');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
-const TerserPlugin = require('terser-webpack-plugin')
-
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+const CompressionPlugin = require('compression-webpack-plugin');
 
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const commonConfig = require('./webpack.common.js');
 
+const cssLoaderModulesRule = {
+  loader: 'css-loader',
+  options: {
+    importLoaders: 1,
+    modules: {
+      mode: 'local',
+      localIdentName: '[name]__[local]--[hash:base64:5]',
+    },
+  },
+};
 
 
 module.exports = merge(commonConfig,
   {
     mode: 'production',
-    devtool: 'source-map',
+    output: {
+      filename: '[name].bundle.[contenthash].js',
+      publicPath: '/'
+    },
+    devtool: '',
     plugins: [
+      new CompressionPlugin(),
       new CleanWebpackPlugin(),
       new MiniCssExtractPlugin(
         {
           filename: '[name].[contenthash].css',
-        })
+        },
+      )
     ],
     module: {
       rules: [
@@ -26,9 +42,36 @@ module.exports = merge(commonConfig,
           test: /\.css$/,
           use: [
             MiniCssExtractPlugin.loader,
-            'css-loader'
+            cssLoaderModulesRule,
+          ],
+          include: /\.module\.css$/,
+        },
+        {
+          test: /\.css$/,
+          use: [
+            MiniCssExtractPlugin.loader,
+            'css-loader',
+          ],
+          exclude: /\.module\.css$/,
+        },
+        {
+          test: /\.s[ac]ss$/,
+          include: /\.module\.scss$/,
+          use: [
+            MiniCssExtractPlugin.loader,
+            cssLoaderModulesRule,
+            'sass-loader',
           ],
         },
+        {
+          test: /\.s[ac]ss$/,
+          exclude: /\.module\.scss$/,
+          use: [
+            MiniCssExtractPlugin.loader,
+            'css-loader',
+            'sass-loader',
+          ],
+        }
       ],
     },
 
@@ -52,8 +95,16 @@ module.exports = merge(commonConfig,
           sourceMap: true,
         }),
       ],
+      splitChunks: {
+        cacheGroups: {
+          commons: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendors',
+            chunks: 'all'
+          }
+        }
+      }
     },
 
 
-  }
-);
+  });
