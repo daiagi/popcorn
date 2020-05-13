@@ -23,6 +23,46 @@ const parseTime = (time) => {
   const houresString = (houres > 0) ? `${houres}h` : '';
   return `${houresString} ${minutes}m`;
 };
+
+const getHelmetChildern = (showDetails, mediaType, showId) => {
+  if (Object.keys(showDetails).length === 0) {
+    return null;
+  }
+  const description = `${showDetails?.overview?.substring(0, 162)}...`;
+  const posterUri = showDetails.posterPath && `https://image.tmdb.org/t/p/w185${showDetails.posterPath}`;
+  const canonicalPageUri = `https://justpop.info/${showId}?mediaType=${mediaType}`;
+
+
+  const titleTag = showDetails.title && <title key={showDetails.title}>{`${showDetails.title} - PoP `}</title>;
+  const descriptionTag = showDetails.overview && <meta key="descriptionTag" name="description" content={description} />;
+  const canonicalTag = <link rel="canonical" href={canonicalPageUri} />;
+
+
+  return (
+    [
+      titleTag,
+      descriptionTag,
+      canonicalTag,
+      <meta property="og:url" content={canonicalPageUri} />,
+      <meta property="og:title" content={showDetails.title} />,
+      <meta
+        property="og:description"
+        content={description}
+      />,
+      <meta property="og:image" content={posterUri} />,
+      <meta property="twitter:card" content={posterUri} />,
+      <meta property="twitter:url" content={canonicalPageUri} />,
+      <meta property="twitter:title" content={showDetails.title} />,
+      <meta
+        property="twitter:description"
+        content={description}
+      />,
+      <meta property="twitter:image" content={posterUri} />
+    ]
+
+
+  );
+};
 const ShowDetails = () => {
   const { showId } = useParams();
   const mediaType = new URLSearchParams(useLocation().search).get('mediaType');
@@ -86,11 +126,11 @@ const ShowDetails = () => {
 
   return (
     <div className={style.PageContainer}>
-      {details?.title && (
-        <Helmet>
-          <title>{`${details.title} - PoP `}</title>
-        </Helmet>
-      )}
+      <Helmet>
+        {getHelmetChildern(details, mediaType, showId)}
+      </Helmet>
+
+
       <div className={style.container}>
         <WithLoading>
           <div
@@ -116,7 +156,6 @@ const ShowDetails = () => {
                 posterPath={details?.posterPath}
                 title={details?.title}
                 className={style.posterImg}
-
               />
             </div>
 

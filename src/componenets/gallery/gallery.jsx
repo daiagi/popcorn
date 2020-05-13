@@ -10,13 +10,14 @@ import style from './gallery.module.css';
 
 // Todo : insert canonical tags one you have a domain
 const locationToMetaTags = {
-  '/tv/': () => (
-    <title>TV-PoP</title>
-  ),
+  '/tv/': () => ([
+    <title>TV-PoP</title>,
+    <link rel="canonical" href="https://justpop.info/tv/" />
+  ]),
   '/movie/': () => (
     [
       <title>Movies-PoP</title>,
-      <link rel="canonical" href="https://justpop.info" />,
+
     ]
   ),
   '/': () => <title>PoP</title>

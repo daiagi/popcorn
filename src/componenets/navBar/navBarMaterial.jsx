@@ -61,7 +61,7 @@ export default function NavBarMaterial(props) {
               <div className={classes.title}>
                 <img
                   onClick={onLogoClick}
-
+                  loading="lazy"
                   src={logo}
                   alt="logo"
                   className={classes.logo}
