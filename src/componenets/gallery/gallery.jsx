@@ -14,8 +14,10 @@ const locationToMetaTags = {
     <title>TV-PoP</title>
   ),
   '/movie/': () => (
-    <title>Movies-PoP</title>
-    // <link rel="canonical" href="http://mysite.com/example" />
+    [
+      <title>Movies-PoP</title>,
+      <link rel="canonical" href="https://justpop.info" />,
+    ]
   ),
   '/': () => <title>PoP</title>
 };
