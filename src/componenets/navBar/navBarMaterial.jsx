@@ -7,7 +7,7 @@ import Select from '@material-ui/core/Select';
 import Toolbar from '@material-ui/core/Toolbar';
 import SearchIcon from '@material-ui/icons/Search';
 import React from 'react';
-import { useRouteMatch, useHistory } from 'react-router-dom';
+import { useRouteMatch } from 'react-router-dom';
 import logo from '../../../icons/logo-via-logohub.png';
 import { MediaTypes } from '../interfaces';
 import {
@@ -36,9 +36,10 @@ export default function NavBarMaterial(props) {
     onSearchKeyDown,
     searchQuery,
     onSearchQueryChange,
+    onLogoClick
   } = props;
   const classes = appBarStyle();
-  const history = useHistory();
+
 
   const trigger = useScrollTrigger();
   const match = useRouteMatch('/show/:showId');
@@ -59,7 +60,7 @@ export default function NavBarMaterial(props) {
             <Toolbar>
               <div className={classes.title}>
                 <img
-                  onClick={() => history.push('/')}
+                  onClick={onLogoClick}
 
                   src={logo}
                   alt="logo"
