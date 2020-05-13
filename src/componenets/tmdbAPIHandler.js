@@ -66,7 +66,7 @@ export const appendApiKeyParam = (url) => (url.includes('?')
 
 
 export const getDiscoverUri = (type = 'movie', sortBy = 'popularity.desc', page = 1) => {
-  const url = `${tmdbApiBaseUrl}discover/${type}/?page=${page}&sort_by=${sortBy}&include_adult=false&include_video=false`;
+  const url = `${tmdbApiBaseUrl}discover/${type}?page=${page}&sort_by=${sortBy}&include_adult=false&include_video=false`;
   return appendApiKeyParam(url);
 };
 
