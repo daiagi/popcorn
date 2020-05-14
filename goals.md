@@ -1,4 +1,4 @@
-### 1. Setup Your Very Own Webpack Config From Scratch
+### 1. Setup my own Webpack config from scratch
 - Compile es7 to es5 (basics). ***done***
 - Compile .jsx to .js, or, .vue to .js (you will learn about loaders) ***done***
 - Setup of webpack dev server and hot module reloading ***done***
