@@ -11,4 +11,4 @@ This is a small project I have created In order to get hands on expirience in Se
 - Webpack producation/develpoment configuration
 - work with images and youtube videos
 
-you can read more (not much more) on the project goals and technolgies i used in  ***goals.md***
+you can read more (not much more) on the project goals and technolgies i used in  [goals](goals.md)
