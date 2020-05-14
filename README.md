@@ -1,6 +1,7 @@
 # PoP
-TV and movies navigation app inspired by popcorn time
-https://justpop.info/
+TV and movies navigation app inspired by popcorn time.
+#### check it out on **https://justpop.info/**
+
 ### Why?
 This is a small project I have created In order to get hands on expirience in Several topics including
 - Mobile first design and responsivness
