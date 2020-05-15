@@ -50,7 +50,6 @@ const getHelmetChildern = (showDetails, mediaType, showId) => {
         content={description}
       />,
       <meta property="og:image" content={posterUri} />,
-      <meta property="twitter:card" content={posterUri} />,
       <meta property="twitter:url" content={canonicalPageUri} />,
       <meta property="twitter:title" content={showDetails.title} />,
       <meta
