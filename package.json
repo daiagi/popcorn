@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --config ./config/webpack.prod.js",
-    "start": "webpack-dev-server --config ./config/webpack.dev.js --open"
+    "start": "webpack-dev-server --config ./config/webpack.dev.js --open",
+    "publish": "node ./publishToAws" 
   },
   "author": "Baruch Fishman",
   "license": "ISC",
@@ -18,6 +19,7 @@
     "@babel/preset-env": "^7.9.5",
     "@babel/preset-react": "^7.9.4",
     "@babel/register": "^7.9.0",
+    "aws-sdk": "^2.677.0",
     "babel-eslint": "^10.1.0",
     "clean-webpack-plugin": "^3.0.0",
     "compression-webpack-plugin": "^3.1.0",
@@ -49,6 +51,7 @@
     "@material-ui/core": "^4.9.13",
     "@material-ui/icons": "^4.9.1",
     "@types/youtube": "0.0.38",
+    "aws-cli-js": "^2.0.6",
     "babel-loader": "^8.1.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
