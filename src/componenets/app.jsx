@@ -103,6 +103,7 @@ const App = () => {
       }
     );
   };
+  const onLogoClick = () => onMediaTypeSelect(MediaTypes.Movie);
 
 
   const search = () => {
@@ -130,6 +131,7 @@ const App = () => {
         onSearchKeyDown={handleSearchKeyDown}
         searchQuery={searchQuery}
         onSearchQueryChange={setSearchQuery}
+        onLogoClick={onLogoClick}
       />
 
       <Switch>

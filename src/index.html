@@ -1,19 +1,42 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+
+  <!-- Primary Meta Tags -->
+
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta name="title" content="Pop">
+  <meta name="title" content="PoP">
   
-  <meta name="description" content="PoP allows you to read about and watch the trailer of your fovourites TV shows or Movies">
-  <meta name="keywords" content="Movies, TV Shows, Trailers, Posters, Videos, Ratings, Synopsis, Actors, Directors">
+  <meta name="description" content="PoP! Watch trailers and read about your favourite TV shows and Movies">
   <meta name="robots" content="index, follow">
   <meta name="language" content="English">
   <meta name="author" content="Baruch Fishman">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  <link rel="shortcut icon" type="image/x-icon" href="<%=htmlWebpackPlugin.files.favicon%>">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+  <link rel="canonical" href="https://justpop.info" />
+  <meta name=" theme-color" content="rgb(63, 81, 181)" />
+
+  <link rel="apple-touch-icon" href=<%=require("../icons/favicon/apple-touch-icon.png").default%> ">
+
+
+  <!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://justpop.info/">
+<meta property="og:title" content="PoP">
+<meta property="og:description"
+ content="PoP! Watch trailers and read about your favourite TV shows and Movies">
+<meta property="og:image" content="<%=require("../icons/favicon/android-chrome-192x192.png").default%> ">
+
+<!-- Twitter -->
+<meta property="twitter:card" content=<%=require("../icons/logo-via-logohub.png").default%> ">
+<meta property="twitter:url" content="https://justpop.info/">
+<meta property="twitter:title" content="PoP">
+<meta property="twitter:description"
+content="PoP! Watch trailers and read about your favourite TV shows and Movies">
+<meta property="twitter:image" content=<%=require("../icons/favicon/android-chrome-192x192.png").default%> ">
 
 </head>
 
